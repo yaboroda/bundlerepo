@@ -63,7 +63,21 @@ def rmDir(path):
 
 def printHelp():
     print "usage:"
-    print "bundlerepo package_name [package_name]"
+    print "bundlerepo package_name [user_name]"
+
+
+def ask(path, url, username):
+    print "directory "+path
+    print "will be replaced with repository "+url
+    if(username):
+        print "with username "+username
+    print "press Enter to continue"
+    print "press Ctrl+C to interrupt"
+    try:
+        raw_input()
+    except (KeyboardInterrupt, SystemExit):
+        print ""
+        exit()
 
 
 if __name__ == "__main__":
@@ -74,13 +88,14 @@ if __name__ == "__main__":
         username = ''
     if len(sys.argv) == 3:
         username = sys.argv[2]
+    if len(sys.argv) > 3:
+        print "ERROR: too many arguments"
+        exit()
 
     package = getPackageData(sys.argv[1])
     path = getPackagePath(package)
     url = getPackageUrl(package, username)
 
-    print path
-    print url
-
+    ask(path, url, username)
     rmDir(path)
     cloneRepo(url, path)

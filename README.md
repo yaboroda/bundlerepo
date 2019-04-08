@@ -4,7 +4,7 @@ yet works with hg repositories only
 
 requires python2
 
-just download script and put into PATH
+just download script, make it exacutable and put into PATH
 
 usage:
 ```
