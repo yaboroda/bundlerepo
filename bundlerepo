@@ -1,0 +1,86 @@
+#!/usr/bin/env python2
+import json
+import sys
+import os
+from subprocess import Popen, PIPE, call
+import shutil
+
+VENDOR_PATH = './vendor/'
+LOCK_FILE_PATH = './composer.lock'
+
+
+def getData(path):
+    if not os.path.isfile(path):
+        print "ERROR: composer.lock not found"
+        exit()
+
+    with open('composer.lock') as f:
+        data = json.load(f)
+    return data
+
+
+def getPackageData(package_name, path=LOCK_FILE_PATH):
+    data = getData(path)
+
+    for package in data['packages']:
+        if package['name'] == package_name:
+            return package
+
+    print "ERROR: package not found"
+    exit()
+
+
+def getPackagePath(package):
+    return VENDOR_PATH + package['name']
+
+
+def getPackageUrl(package, username=''):
+    if 'source' not in package or 'url' not in package['source']:
+        print "ERROR: can\'t find url"
+        exit()
+    url = package['source']['url']
+    if(username):
+        url = insertUsernameIntoUrl(url, username);
+    return url
+
+
+def insertUsernameIntoUrl(url, username):
+    parts = url.split('//')
+    url = parts[0] + '//' + username + '@' + parts[1]
+    return url
+
+
+def cloneRepo(url, path):
+    cmd = 'hg clone '+url+' '+path
+    print cmd
+    call(cmd, shell=True)
+
+
+def rmDir(path):
+    if os.path.isdir(path):
+        shutil.rmtree(path)
+
+
+def printHelp():
+    print "usage:"
+    print "bundlerepo package_name [package_name]"
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        printHelp()
+        exit()
+    if len(sys.argv) == 2:
+        username = ''
+    if len(sys.argv) == 3:
+        username = sys.argv[2]
+
+    package = getPackageData(sys.argv[1])
+    path = getPackagePath(package)
+    url = getPackageUrl(package, username)
+
+    print path
+    print url
+
+    rmDir(path)
+    cloneRepo(url, path)
