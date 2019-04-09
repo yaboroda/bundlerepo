@@ -4,7 +4,7 @@ yet works with hg repositories only
 
 requires python2
 
-just download script, make it exacutable and put into PATH
+just download [script](https://raw.githubusercontent.com/yaboroda/bundlerepo/master/bundlerepo), make it exacutable and put into PATH
 
 usage:
 ```
