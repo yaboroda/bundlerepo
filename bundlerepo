@@ -44,14 +44,22 @@ def getPackageUrl(package, username=''):
     return url
 
 
+def getPackageType(package):
+    if 'source' not in package or 'type' not in package['source']:
+        print "ERROR: can\'t find url"
+        exit()
+    p_type = package['source']['type']
+    return p_type
+
+
 def insertUsernameIntoUrl(url, username):
     parts = url.split('//')
     url = parts[0] + '//' + username + '@' + parts[1]
     return url
 
 
-def cloneRepo(url, path):
-    cmd = 'hg clone '+url+' '+path
+def cloneRepo(p_type, url, path):
+    cmd = p_type+' clone '+url+' '+path
     print cmd
     call(cmd, shell=True)
 
@@ -95,7 +103,8 @@ if __name__ == "__main__":
     package = getPackageData(sys.argv[1])
     path = getPackagePath(package)
     url = getPackageUrl(package, username)
+    p_type = getPackageType(package)
 
     ask(path, url, username)
     rmDir(path)
-    cloneRepo(url, path)
+    cloneRepo(p_type, url, path)
