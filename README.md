@@ -1,6 +1,6 @@
 bundlerepo removes composer package and replace it with it's repository
 
-yet works with hg repositories only
+works with git and mercurial repositories
 
 requires python2
 
